@@ -164,9 +164,15 @@ def upload_document_route():
 
 
 
-    except Exception:
+
+    except Exception as e:
+        import traceback
+
+        traceback.print_exc()
+
         return jsonify({
-            "message": "Erreur interne lors de l'enregistrement du document."
+            "message": "Erreur interne lors de l'enregistrement du document.",
+            "erreur": str(e)
         }), 500
 
 

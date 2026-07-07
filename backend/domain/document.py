@@ -36,3 +36,17 @@ class Document(db.Model):
         default=lambda: datetime.now(UTC),
         nullable=False
     )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "dossier_id": self.dossier_id,
+            "nom": self.nom,
+            "type_document": self.type_document,
+            "taille": self.taille,
+            "date_upload": (
+                self.date_upload.isoformat()
+                if self.date_upload else None
+            ),
+            "url_download": f"/api/documents/{self.id}/download"
+        }

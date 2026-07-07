@@ -7,6 +7,7 @@ durant le développement.
 
 from domain.sejour import Sejour
 
+
 SEJOURS = {
     "202600001": Sejour(
         numero_sejour="202600001",
@@ -27,3 +28,7 @@ SEJOURS = {
 
 def rechercher_par_numero(numero_sejour: str):
     return SEJOURS.get(numero_sejour)
+
+
+def lister():
+    return list(SEJOURS.values())

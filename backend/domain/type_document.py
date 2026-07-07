@@ -1,0 +1,10 @@
+from enum import Enum
+
+
+class TypeDocument(str, Enum):
+    DECLARATION_NAISSANCE = "DECLARATION_NAISSANCE"
+    CNI_MERE = "CNI_MERE"
+    CNI_PERE = "CNI_PERE"
+    LIVRET_FAMILLE = "LIVRET_FAMILLE"
+    PASSEPORT = "PASSEPORT"
+    AUTRE = "AUTRE"
