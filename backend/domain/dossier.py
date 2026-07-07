@@ -39,3 +39,10 @@ class DossierDocumentaire(db.Model):
             "commentaire": self.commentaire,
             "date_creation": self.date_creation.isoformat()
         }
+
+    documents = db.relationship(
+        "Document",
+        backref="dossier",
+        lazy=True,
+        cascade="all, delete-orphan"
+    )

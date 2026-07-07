@@ -14,13 +14,13 @@ class Document(db.Model):
         nullable=False
     )
 
-    type_document = db.Column(
-        db.String(100),
+    nom = db.Column(
+        db.String(255),
         nullable=False
     )
 
-    nom_fichier = db.Column(
-        db.String(255),
+    type_document = db.Column(
+        db.String(50),
         nullable=False
     )
 
@@ -29,28 +29,10 @@ class Document(db.Model):
         nullable=False
     )
 
-    date_depot = db.Column(
+    taille = db.Column(db.Integer)
+
+    date_upload = db.Column(
         db.DateTime,
         default=lambda: datetime.now(UTC),
         nullable=False
     )
-
-    statut = db.Column(
-        db.String(30),
-        default="DEPOSE",
-        nullable=False
-    )
-
-    commentaire = db.Column(db.Text)
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "dossier_id": self.dossier_id,
-            "type_document": self.type_document,
-            "nom_fichier": self.nom_fichier,
-            "chemin_fichier": self.chemin_fichier,
-            "date_depot": self.date_depot.isoformat(),
-            "statut": self.statut,
-            "commentaire": self.commentaire
-        }
