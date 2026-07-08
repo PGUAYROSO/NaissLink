@@ -5,10 +5,13 @@ from app.extensions import db
 class DossierRepository:
 
     @staticmethod
-    def creer(numero_sejour: str):
-
+    def creer(
+            numero_sejour: str,
+            cree_par: str
+    ):
         dossier = DossierDocumentaire(
-            numero_sejour=numero_sejour
+            numero_sejour=numero_sejour,
+            cree_par=cree_par
         )
 
         db.session.add(dossier)

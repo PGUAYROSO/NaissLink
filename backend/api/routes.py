@@ -1,5 +1,30 @@
+# ------------------------------------------------------------------
+# Standard Library
+# ------------------------------------------------------------------
+
+import os
+import traceback
+
+# ------------------------------------------------------------------
+# Flask
+# ------------------------------------------------------------------
+
 from flask import Blueprint, jsonify, request, send_file
 
+# ------------------------------------------------------------------
+# JWT
+# ------------------------------------------------------------------
+
+from flask_jwt_extended import (
+    jwt_required,
+    get_jwt
+)
+
+# ------------------------------------------------------------------
+# Application
+# ------------------------------------------------------------------
+
+from application.journaliser_action import executer as journaliser_action
 from application.recherche_sejour import executer as rechercher_sejour_service
 from application.creer_dossier import executer as creer_dossier
 from application.consulter_dossier import executer as consulter_dossier
@@ -8,9 +33,11 @@ from application.lister_documents import executer as lister_documents
 from application.upload_document import executer as upload_document_service
 from application.consulter_document import executer as consulter_document
 
-from infrastructure.dossier_repository import DossierRepository
+# ------------------------------------------------------------------
+# Infrastructure
+# ------------------------------------------------------------------
 
-import os
+from infrastructure.dossier_repository import DossierRepository
 
 api = Blueprint("api", __name__)
 
@@ -57,6 +84,7 @@ def rechercher_sejour(numero_sejour):
 # ------------------------------------------------------------------
 
 @api.post("/dossiers")
+@jwt_required()
 def creer_dossier_route():
 
     data = request.get_json(silent=True)
@@ -73,12 +101,23 @@ def creer_dossier_route():
             "message": "Le numéro de séjour est obligatoire."
         }), 400
 
-    dossier = creer_dossier(numero_sejour)
+    claims = get_jwt()
+
+    dossier = creer_dossier(
+        numero_sejour=numero_sejour,
+        cree_par=claims["login"]
+    )
 
     if dossier is None:
         return jsonify({
             "message": "Un dossier documentaire existe déjà pour ce séjour."
         }), 409
+
+    journaliser_action(
+        utilisateur=claims["login"],
+        action="CREATE_DOSSIER",
+        objet=numero_sejour
+    )
 
     return jsonify(dossier.to_dict()), 201
 
@@ -88,6 +127,7 @@ def creer_dossier_route():
 # ------------------------------------------------------------------
 
 @api.get("/dossiers/<numero_sejour>")
+@jwt_required()
 def consulter_dossier_route(numero_sejour):
 
     dossier = consulter_dossier(numero_sejour)
@@ -97,6 +137,14 @@ def consulter_dossier_route(numero_sejour):
             "message": "Dossier documentaire introuvable."
         }), 404
 
+    claims = get_jwt()
+
+    journaliser_action(
+        utilisateur=claims["login"],
+        action="CONSULTER_DOSSIER",
+        objet=numero_sejour
+    )
+
     return jsonify(dossier.to_dict())
 
 
@@ -105,6 +153,7 @@ def consulter_dossier_route(numero_sejour):
 # ------------------------------------------------------------------
 
 @api.get("/dossiers")
+@jwt_required()
 def lister_dossiers_route():
 
     dossiers = lister_dossiers()
@@ -120,7 +169,9 @@ def lister_dossiers_route():
 # ------------------------------------------------------------------
 
 @api.post("/documents/upload")
+@jwt_required()
 def upload_document_route():
+
     fichier = request.files.get("fichier")
 
     if fichier is None:
@@ -154,6 +205,14 @@ def upload_document_route():
             fichier=fichier
         )
 
+        claims = get_jwt()
+
+        journaliser_action(
+            utilisateur=claims["login"],
+            action="UPLOAD_DOCUMENT",
+            objet=document.nom
+        )
+
         return jsonify(document.to_dict()), 201
 
     except ValueError as e:
@@ -162,11 +221,7 @@ def upload_document_route():
             "message": str(e)
         }), 400
 
-
-
-
     except Exception as e:
-        import traceback
 
         traceback.print_exc()
 
@@ -181,6 +236,7 @@ def upload_document_route():
 # ------------------------------------------------------------------
 
 @api.get("/dossiers/<numero_sejour>/documents")
+@jwt_required()
 def lister_documents_route(numero_sejour):
 
     dossier = DossierRepository.trouver_par_numero_sejour(numero_sejour)
@@ -203,6 +259,7 @@ def lister_documents_route(numero_sejour):
 # ------------------------------------------------------------------
 
 @api.get("/documents/<int:document_id>")
+@jwt_required()
 def consulter_document_route(document_id):
 
     document = consulter_document(document_id)
@@ -212,6 +269,14 @@ def consulter_document_route(document_id):
             "message": "Document introuvable."
         }), 404
 
+    claims = get_jwt()
+
+    journaliser_action(
+        utilisateur=claims["login"],
+        action="CONSULTER_DOCUMENT",
+        objet=document.nom
+    )
+
     return jsonify(document.to_dict())
 
 
@@ -220,6 +285,7 @@ def consulter_document_route(document_id):
 # ------------------------------------------------------------------
 
 @api.get("/documents/<int:document_id>/download")
+@jwt_required()
 def telecharger_document_route(document_id):
 
     document = consulter_document(document_id)
@@ -233,6 +299,14 @@ def telecharger_document_route(document_id):
         return jsonify({
             "message": "Le fichier est introuvable sur le serveur."
         }), 404
+
+    claims = get_jwt()
+
+    journaliser_action(
+        utilisateur=claims["login"],
+        action="TELECHARGER_DOCUMENT",
+        objet=document.nom
+    )
 
     return send_file(
         document.chemin_fichier,

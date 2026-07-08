@@ -6,7 +6,6 @@ class UtilisateurRepository:
 
     @staticmethod
     def creer(utilisateur):
-
         db.session.add(utilisateur)
         db.session.commit()
 
@@ -14,7 +13,6 @@ class UtilisateurRepository:
 
     @staticmethod
     def trouver_par_login(login: str):
-
         return (
             Utilisateur.query
             .filter_by(login=login)
@@ -23,7 +21,6 @@ class UtilisateurRepository:
 
     @staticmethod
     def trouver_par_email(email: str):
-
         return (
             Utilisateur.query
             .filter_by(email=email)
@@ -32,20 +29,24 @@ class UtilisateurRepository:
 
     @staticmethod
     def trouver_par_id(utilisateur_id: int):
-
         return Utilisateur.query.get(utilisateur_id)
 
     @staticmethod
     def trouver_tous():
-
         return (
             Utilisateur.query
-            .order_by(Utilisateur.nom)
+            .order_by(
+                Utilisateur.nom,
+                Utilisateur.prenom
+            )
             .all()
         )
 
     @staticmethod
-    def supprimer(utilisateur):
+    def mettre_a_jour():
+        db.session.commit()
 
+    @staticmethod
+    def supprimer(utilisateur):
         db.session.delete(utilisateur)
         db.session.commit()
