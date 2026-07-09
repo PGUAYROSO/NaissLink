@@ -50,3 +50,7 @@ class UtilisateurRepository:
     def supprimer(utilisateur):
         db.session.delete(utilisateur)
         db.session.commit()
+
+    @staticmethod
+    def enregistrer():
+        db.session.commit()
