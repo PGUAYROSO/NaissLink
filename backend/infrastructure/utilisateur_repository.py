@@ -54,3 +54,15 @@ class UtilisateurRepository:
     @staticmethod
     def enregistrer():
         db.session.commit()
+
+    @staticmethod
+    def compter_administrateurs_actifs():
+
+        return (
+            Utilisateur.query
+            .filter_by(
+                role="ADMINISTRATEUR",
+                actif=True
+            )
+            .count()
+        )

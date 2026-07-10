@@ -195,24 +195,33 @@ def modifier_etat_utilisateur_route(utilisateur_id):
             400
         )
 
-    utilisateur = modifier_etat_utilisateur(
-        utilisateur_id=utilisateur_id,
-        actif=data["actif"]
-    )
+    try:
 
-    if utilisateur is None:
-        return error(
-            "Utilisateur introuvable.",
-            404
+        utilisateur = modifier_etat_utilisateur(
+            utilisateur_id=utilisateur_id,
+            actif=data["actif"]
         )
 
-    journaliser_action(
-        utilisateur=utilisateur.login,
-        action="MODIFIER_ETAT_UTILISATEUR",
-        objet=str(utilisateur.actif)
-    )
+        if utilisateur is None:
+            return error(
+                "Utilisateur introuvable.",
+                404
+            )
 
-    return success({
-        "message": "État de l'utilisateur mis à jour.",
-        "actif": utilisateur.actif
-    })
+        journaliser_action(
+            utilisateur=utilisateur.login,
+            action="MODIFIER_ETAT_UTILISATEUR",
+            objet=str(utilisateur.actif)
+        )
+
+        return success({
+            "message": "État de l'utilisateur mis à jour.",
+            "actif": utilisateur.actif
+        })
+
+    except ValueError as e:
+
+        return error(
+            str(e),
+            409
+        )

@@ -13,6 +13,28 @@ def executer(
     if utilisateur is None:
         return None
 
+    # --------------------------------------------------------
+    # Règle métier :
+    # Impossible de désactiver le dernier administrateur actif
+    # --------------------------------------------------------
+
+    if (
+        utilisateur.role == "ADMINISTRATEUR"
+        and utilisateur.actif
+        and not actif
+    ):
+
+        nb_admins = (
+            UtilisateurRepository
+            .compter_administrateurs_actifs()
+        )
+
+        if nb_admins <= 1:
+
+            raise ValueError(
+                "Impossible de désactiver le dernier administrateur actif."
+            )
+
     utilisateur.actif = actif
 
     UtilisateurRepository.enregistrer()
