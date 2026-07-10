@@ -36,3 +36,9 @@ class DossierRepository:
             .order_by(DossierDocumentaire.date_creation.desc())
             .all()
         )
+
+    @staticmethod
+    def trouver_par_id(dossier_id: int):
+        return DossierDocumentaire.query.get(dossier_id)
+
+
