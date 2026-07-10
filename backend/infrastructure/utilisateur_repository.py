@@ -66,3 +66,15 @@ class UtilisateurRepository:
             )
             .count()
         )
+
+    @staticmethod
+    def compter_par_role(role: str):
+
+        return (
+            Utilisateur.query
+            .filter_by(
+                role=role,
+                actif=True
+            )
+            .count()
+        )

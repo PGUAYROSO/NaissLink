@@ -40,7 +40,6 @@ from application.reinitialiser_mot_de_passe import (
     executer as reinitialiser_mot_de_passe
 )
 
-
 # ------------------------------------------------------------------
 # Activation / Désactivation d'un utilisateur
 # ------------------------------------------------------------------
@@ -48,6 +47,15 @@ from application.reinitialiser_mot_de_passe import (
 from application.modifier_etat_utilisateur import (
     executer as modifier_etat_utilisateur
 )
+
+# ------------------------------------------------------------------
+# Modification du rôle d'un utilisateur
+# ------------------------------------------------------------------
+
+from application.modifier_role_utilisateur import (
+    executer as modifier_role_utilisateur
+)
+
 # ------------------------------------------------------------------
 # Liste des utilisateurs
 # ------------------------------------------------------------------
@@ -63,7 +71,6 @@ def lister_utilisateurs_route():
         utilisateur.to_dict()
         for utilisateur in utilisateurs_liste
     ])
-
 
 # ------------------------------------------------------------------
 # Modification d'un utilisateur
@@ -217,6 +224,63 @@ def modifier_etat_utilisateur_route(utilisateur_id):
         return success({
             "message": "État de l'utilisateur mis à jour.",
             "actif": utilisateur.actif
+        })
+
+    except ValueError as e:
+
+        return error(
+            str(e),
+            409
+        )
+# ------------------------------------------------------------------
+# Modification du rôle d'un utilisateur
+# ------------------------------------------------------------------
+
+@utilisateurs.patch("/utilisateurs/<int:utilisateur_id>/role")
+@jwt_required()
+@roles_required(ROLE_ADMIN)
+def modifier_role_utilisateur_route(utilisateur_id):
+
+    data = request.get_json(silent=True)
+
+    if data is None:
+        return error(
+            "Le corps de la requête est invalide.",
+            400
+        )
+
+    role = data.get("role")
+
+    if not role:
+
+        return error(
+            "Le rôle est obligatoire.",
+            400
+        )
+
+    try:
+
+        utilisateur = modifier_role_utilisateur(
+            utilisateur_id=utilisateur_id,
+            role=role
+        )
+
+        if utilisateur is None:
+
+            return error(
+                "Utilisateur introuvable.",
+                404
+            )
+
+        journaliser_action(
+            utilisateur=utilisateur.login,
+            action="MODIFIER_ROLE",
+            objet=role
+        )
+
+        return success({
+            "message": "Rôle modifié avec succès.",
+            "role": utilisateur.role
         })
 
     except ValueError as e:
