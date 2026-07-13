@@ -164,7 +164,11 @@ class DossierDocumentaire(db.Model):
 
             "numero_sejour": self.numero_sejour,
 
-            "statut": self.statut,
+            "statut": (
+                self.statut.value
+                if hasattr(self.statut, "value")
+                else self.statut
+),
 
             "cree_par": self.cree_par,
 

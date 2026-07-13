@@ -1,61 +1,35 @@
-import { createTheme } from "@mui/material/styles";
+import { Box, Toolbar } from "@mui/material";
+import { Outlet } from "react-router-dom";
 
-const theme = createTheme({
+import Header from "../components/Header";
+import Sidebar from "../components/Sidebar";
 
-    palette: {
+export default function MainLayout() {
 
-        primary: {
-            main: "#1565C0"
-        },
+    return (
 
-        secondary: {
-            main: "#2E7D32"
-        },
+        <Box sx={{ display: "flex" }}>
 
-        success: {
-            main: "#2E7D32"
-        },
+            <Header />
 
-        warning: {
-            main: "#ED6C02"
-        },
+            <Sidebar />
 
-        error: {
-            main: "#D32F2F"
-        },
+            <Box
+                component="main"
+                sx={{
+                    flexGrow: 1,
+                    p: 4
+                }}
+            >
 
-        background: {
+                <Toolbar />
 
-            default: "#F5F7FA",
+                <Outlet />
 
-            paper: "#FFFFFF"
+            </Box>
 
-        }
+        </Box>
 
-    },
+    );
 
-    typography: {
-
-        fontFamily: [
-            "Roboto",
-            "Arial",
-            "sans-serif"
-        ].join(","),
-
-        h4: {
-
-            fontWeight: 700
-
-        }
-
-    },
-
-    shape: {
-
-        borderRadius: 10
-
-    }
-
-});
-
-export default theme;
+}
