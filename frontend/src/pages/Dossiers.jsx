@@ -1,26 +1,30 @@
 import { useEffect, useState } from "react";
 
+import { Typography } from "@mui/material";
+
+import DossierToolbar from "../components/dossiers/DossierToolbar";
+import DossierTable from "../components/dossiers/DossierTable";
+
+import DossierDialog from "../components/dossiers/DossierDialog";
+
 import {
-    Typography,
-    Paper,
-    Chip,
-    IconButton,
-    Box
-} from "@mui/material";
-
-import VisibilityIcon from "@mui/icons-material/Visibility";
-
-import { DataGrid } from "@mui/x-data-grid";
-
-import { listerDossiers } from "../services/dossierService";
+    listerDossiers,
+    creerDossier
+} from "../services/dossierService";
 
 export default function Dossiers() {
 
     const [dossiers, setDossiers] = useState([]);
+    const [recherche, setRecherche] = useState("");
+    const [dialogOuvert, setDialogOuvert] = useState(false);
 
     useEffect(() => {
 
-        async function charger() {
+        charger();
+
+    }, []);
+
+    async function charger() {
 
             try {
 
@@ -36,88 +40,37 @@ export default function Dossiers() {
 
         }
 
-        charger();
+    const dossiersFiltres = dossiers.filter((dossier) =>
+        dossier.numero_sejour
+            .toLowerCase()
+            .includes(recherche.toLowerCase())
+    );
 
-    }, []);
+    function nouveauDossier() {
 
-    const columns = [
+    setDialogOuvert(true);
 
-        {
-            field: "numero_sejour",
-            headerName: "N° séjour",
-            flex: 1
-        },
+}
 
-        {
-            field: "statut",
-            headerName: "Statut",
-            flex: 1,
-            renderCell: (params) => (
+    async function creerNouveauDossier(numeroSejour) {
 
-                <Chip
-                    label={params.value}
-                    color={
-                        params.value === "TRANSMIS"
-                            ? "success"
-                            : "warning"
-                    }
-                    size="small"
-                />
+    try {
 
-            )
-        },
+        await creerDossier(numeroSejour);
 
-        {
-            field: "nombre_documents",
-            headerName: "Documents",
-            type: "number",
-            width: 120
-        },
+        setDialogOuvert(false);
 
-        {
-            field: "nombre_transmissions",
-            headerName: "Transmissions",
-            type: "number",
-            width: 140
-        },
+        await charger();
 
-        {
-            field: "cree_par",
-            headerName: "Créé par",
-            width: 150
-        },
+    } catch (e) {
 
-        {
-            field: "date_creation",
-            headerName: "Date création",
-            width: 180,
-                    valueFormatter: (value) => {
-        if (!value) return "";
+        console.error(e);
 
-        return new Date(value).toLocaleString("fr-FR");
+        alert("Impossible de créer le dossier.");
+
     }
-},
 
-
-        {
-            field: "actions",
-            headerName: "Actions",
-            width: 100,
-            sortable: false,
-
-            renderCell: () => (
-
-                <IconButton color="primary">
-
-                    <VisibilityIcon />
-
-                </IconButton>
-
-            )
-
-        }
-
-    ];
+}
 
     return (
 
@@ -130,27 +83,25 @@ export default function Dossiers() {
                 Dossiers documentaires
             </Typography>
 
-            <Paper sx={{ height: 500 }}>
+            <DossierToolbar
+                recherche={recherche}
+                setRecherche={setRecherche}
+                onNouveau={nouveauDossier}
+            />
 
-                <DataGrid
+            <DossierTable
+                dossiers={dossiersFiltres}
 
-                    rows={dossiers}
+            />
+            <DossierDialog
 
-                    columns={columns}
+                open={dialogOuvert}
 
-                    pageSizeOptions={[5, 10, 20]}
+                onClose={() => setDialogOuvert(false)}
 
-                    initialState={{
-                        pagination: {
-                            paginationModel: {
-                                pageSize: 10
-                            }
-                        }
-                    }}
+                onCreate={creerNouveauDossier}
 
-                />
-
-            </Paper>
+            />
 
         </>
 

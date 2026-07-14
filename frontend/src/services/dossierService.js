@@ -7,3 +7,14 @@ export async function listerDossiers() {
     return response.data;
 
 }
+export async function creerDossier(numeroSejour) {
+
+    const response = await api.post("/dossiers", {
+
+        numero_sejour: numeroSejour
+
+    });
+
+    return response.data;
+
+}
