@@ -32,6 +32,7 @@ from application.lister_dossiers import executer as lister_dossiers
 from application.lister_documents import executer as lister_documents
 from application.upload_document import executer as upload_document_service
 from application.consulter_document import executer as consulter_document
+from application.supprimer_document import executer as supprimer_document
 
 # ------------------------------------------------------------------
 # Infrastructure
@@ -313,3 +314,30 @@ def telecharger_document_route(document_id):
         as_attachment=True,
         download_name=document.nom
     )
+
+# ------------------------------------------------------------------
+# Suppression d'un document
+# ------------------------------------------------------------------
+
+@api.delete("/documents/<int:document_id>")
+@jwt_required()
+def supprimer_document_route(document_id):
+
+    document = consulter_document(document_id)
+
+    if document is None:
+        return jsonify({
+            "message": "Document introuvable."
+        }), 404
+
+    claims = get_jwt()
+
+    supprimer_document(document)
+
+    journaliser_action(
+        utilisateur=claims["login"],
+        action="SUPPRIMER_DOCUMENT",
+        objet=document.nom
+    )
+
+    return "", 204
