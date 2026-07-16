@@ -1,44 +1,41 @@
-from app.extensions import db
-
 from domain.transmission import Transmission
-from domain.dossier import StatutDossier
-
 from infrastructure.dossier_repository import DossierRepository
+from infrastructure.transmission_repository import TransmissionRepository
 
 
 def executer(
-    dossier_id: int,
-    commune: str,
-    expediteur: str,
-    commentaire: str = None
+    numero_sejour,
+    destinataire,
+    mode,
+    commentaire,
+    cree_par
 ):
-    # Recherche du dossier
-    dossier = DossierRepository.trouver_par_id(dossier_id)
 
-    if dossier is None:
-        raise ValueError("Dossier introuvable.")
-
-    # Vérification du statut
-    if dossier.statut != StatutDossier.PRET_A_TRANSMETTRE.value:
-        raise ValueError(
-            "Le dossier n'est pas prêt à être transmis."
-        )
-
-    # Création de la transmission
-    transmission = Transmission(
-        dossier_id=dossier.id,
-        commune=commune,
-        expediteur=expediteur,
-        commentaire=commentaire
+    dossier = DossierRepository.trouver_par_numero_sejour(
+        numero_sejour
     )
 
-    # Mise à jour du dossier
-    dossier.transmettre()
+    if dossier is None:
+        raise ValueError(
+            "Le dossier documentaire est introuvable."
+        )
 
-    # Sauvegarde dans une seule transaction
-    db.session.add(transmission)
-    db.session.add(dossier)
+    transmission = Transmission(
 
-    db.session.commit()
+        dossier_id=dossier.id,
 
-    return transmission
+        destinataire=destinataire,
+
+        mode=mode,
+
+        commentaire=commentaire,
+
+        cree_par=cree_par,
+
+        statut="EN_ATTENTE"
+
+    )
+
+    return TransmissionRepository.creer(
+        transmission
+    )
