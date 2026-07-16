@@ -8,18 +8,25 @@ from api.routes import api
 from api.auth_routes import auth
 from api.utilisateurs_routes import utilisateurs
 from api.transmission_routes import transmissions
+from api.type_document_routes import types_documents
 
 import domain.dossier
 import domain.document
 import domain.utilisateur
 import domain.audit_log
 import domain.transmission
+import domain.type_document
 
 
 def create_app():
     app = Flask(__name__)
 
     app.config.from_object("app.config.Config")
+    
+    app.register_blueprint(
+        types_documents,
+        url_prefix="/api"
+    )
 
     CORS(
         app,
