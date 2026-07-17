@@ -1,10 +1,11 @@
+from domain.type_document import CodeTypeDocument
 from infrastructure.document_repository import DocumentRepository
 
 
 def executer(
     dossier_id,
     nom,
-    type_document,
+    type_document: CodeTypeDocument,
     chemin_fichier,
     taille
 ):

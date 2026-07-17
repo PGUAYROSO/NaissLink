@@ -2,7 +2,7 @@ import os
 
 from flask import current_app
 
-from domain.type_document import TypeDocument
+from domain.type_document import CodeTypeDocument
 
 from infrastructure.dossier_repository import DossierRepository
 from infrastructure.stockage_fichiers import StockageFichiers
@@ -21,10 +21,13 @@ def executer(
     if dossier is None:
         raise ValueError("Dossier documentaire introuvable.")
 
+    print("type_document reçu :", repr(type_document))
+
     try:
-        type_document = TypeDocument[type_document]
+        type_document = CodeTypeDocument[type_document]
     except KeyError:
-        raise ValueError("Type de document invalide.")
+        print("Valeurs autorisées :", [e.name for e in CodeTypeDocument])
+        raise ValueError(f"Type de document invalide : {type_document}")
 
     dossier_destination = os.path.join(
         current_app.config["UPLOAD_FOLDER"],

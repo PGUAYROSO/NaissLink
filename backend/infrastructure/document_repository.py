@@ -12,11 +12,10 @@ class DocumentRepository:
         chemin_fichier: str,
         taille: int
     ):
-
         document = Document(
             dossier_id=dossier_id,
             nom=nom,
-            type_document=type_document,
+            type_document=type_document.value if hasattr(type_document, "value") else type_document,
             chemin_fichier=chemin_fichier,
             taille=taille
         )
