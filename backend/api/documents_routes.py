@@ -158,7 +158,7 @@ def consulter_document_route(document_id):
 # Téléchargement d'un document
 # ------------------------------------------------------------------
 
-@documents.get"/documents/<int:document_id>/download")
+@documents.get("/documents/<int:document_id>/download")
 @jwt_required()
 def telecharger_document_route(document_id):
 

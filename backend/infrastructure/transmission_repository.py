@@ -18,6 +18,14 @@ class TransmissionRepository:
         return Transmission.query.get(transmission_id)
 
     @staticmethod
+    def lister():
+        return (
+            Transmission.query
+            .order_by(Transmission.date_creation.desc())
+            .all()
+        )
+
+    @staticmethod
     def lister_par_dossier(dossier_id):
 
         return (

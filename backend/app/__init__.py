@@ -11,6 +11,7 @@ from api.transmission_routes import transmissions
 from api.type_document_routes import types_documents
 from api.administration_routes import administration
 from api.dossiers_routes import dossiers
+from api.documents_routes import documents
 
 import domain.dossier
 import domain.document
@@ -43,6 +44,7 @@ def create_app():
     app.register_blueprint(transmissions, url_prefix="/api")
     app.register_blueprint(administration, url_prefix="/api")
     app.register_blueprint(dossiers, url_prefix="/api")
+    app.register_blueprint(documents, url_prefix="/api")
 
     app.app_context().push()
 

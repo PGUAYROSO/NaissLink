@@ -1,4 +1,5 @@
 import os
+import secrets
 from datetime import timedelta
 
 from dotenv import load_dotenv
@@ -16,7 +17,7 @@ class Config:
 
     SECRET_KEY = os.getenv(
         "SECRET_KEY",
-        "NaissLink-Development-Secret"
+        secrets.token_hex(32)      # 64 caractères hexadécimaux (256 bits)
     )
 
     # ------------------------------------------------------------------
@@ -24,7 +25,6 @@ class Config:
     # ------------------------------------------------------------------
 
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
-
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # ------------------------------------------------------------------
@@ -45,7 +45,7 @@ class Config:
 
     JWT_SECRET_KEY = os.getenv(
         "JWT_SECRET_KEY",
-        "NaissLink-JWT-Development-2026"
+        secrets.token_hex(32)      # 64 caractères hexadécimaux (256 bits)
     )
 
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=8)

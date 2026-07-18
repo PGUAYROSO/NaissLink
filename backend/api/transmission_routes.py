@@ -1,40 +1,30 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required
 
-from application.creer_transmission import (
-    executer as creer_transmission
-)
+from application.creer_transmission import (executer as creer_transmission)
 
-from application.receptionner_transmission import (
-    executer as receptionner_transmission
-)
+from application.receptionner_transmission import (executer as receptionner_transmission)
 
-from application.mettre_en_instruction import (
-    executer as mettre_en_instruction
-)
+from application.mettre_en_instruction import (executer as mettre_en_instruction)
 
-from application.traiter_transmission import (
-    executer as traiter_transmission
-)
+from application.traiter_transmission import (executer as traiter_transmission)
 
-from application.demander_complement import (
-    executer as demander_complement
-)
+from application.demander_complement import (executer as demander_complement)
+
+from application.lister_toutes_transmissions import (executer as lister_toutes_transmissions)
 
 
-transmissions = Blueprint(
-    "transmissions",
-    __name__
-)
+
+
+transmissions = Blueprint("transmissions", __name__)
 
 
 # ------------------------------------------------------------------
 # Création d'une transmission
 # ------------------------------------------------------------------
 
-@transmissions.route(
-    "/transmissions",
-    methods=["POST"]
-)
+@transmissions.post("/transmissions")
+@jwt_required()
 def creer():
 
     try:
@@ -77,10 +67,8 @@ def creer():
 # Réception par la mairie
 # ------------------------------------------------------------------
 
-@transmissions.route(
-    "/transmissions/<int:id>/receptionner",
-    methods=["PUT"]
-)
+@transmissions.put("/transmissions/<int:id>/receptionner",)
+@jwt_required()
 def receptionner(id):
 
     try:
@@ -114,10 +102,8 @@ def receptionner(id):
 # Mise en instruction
 # ------------------------------------------------------------------
 
-@transmissions.route(
-    "/transmissions/<int:id>/instruction",
-    methods=["PUT"]
-)
+@transmissions.put("/transmissions/<int:id>/instruction",)
+@jwt_required()
 def instruction(id):
 
     try:
@@ -151,10 +137,8 @@ def instruction(id):
 # Traitement final
 # ------------------------------------------------------------------
 
-@transmissions.route(
-    "/transmissions/<int:id>/traiter",
-    methods=["PUT"]
-)
+@transmissions.put("/transmissions/<int:id>/traiter",)
+@jwt_required()
 def traiter(id):
 
     try:
@@ -193,10 +177,8 @@ def traiter(id):
 
         }), 500
 
-@transmissions.route(
-    "/transmissions/<int:id>/complement",
-    methods=["PUT"]
-)
+@transmissions.put("/transmissions/<int:id>/complement",)
+@jwt_required()
 def complement(id):
 
     try:
@@ -231,3 +213,18 @@ def complement(id):
             "erreur": str(e)
 
         }), 500
+
+# ------------------------------------------------------------------
+# Liste des transmissions
+# ------------------------------------------------------------------
+
+@transmissions.get("/transmissions")
+@jwt_required()
+def liste():
+
+    transmissions_liste = lister_toutes_transmissions()
+
+    return jsonify([
+        transmission.to_dict()
+        for transmission in transmissions_liste
+    ])
