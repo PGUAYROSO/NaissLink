@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity
 
 from application.creer_transmission import (executer as creer_transmission)
 
@@ -31,15 +32,19 @@ def creer():
 
         data = request.get_json()
 
+        utilisateur = get_jwt_identity()
+        print(get_jwt_identity())
         transmission = creer_transmission(
 
-            dossier_id=data["dossier_id"],
+            numero_sejour=data["numero_sejour"],
 
-            commune=data["commune"],
+            destinataire=data["commune"],
 
-            expediteur=data["expediteur"],
+            mode="NaissLink",
 
-            commentaire=data.get("commentaire")
+            commentaire=data.get("commentaire"),
+
+            cree_par=utilisateur
 
         )
 
@@ -55,11 +60,19 @@ def creer():
 
         return jsonify({"message": str(e)}), 400
 
+
     except Exception as e:
 
+        import traceback
+
+        traceback.print_exc()
+
         return jsonify({
+
             "message": "Erreur interne.",
+
             "erreur": str(e)
+
         }), 500
 
 
@@ -143,12 +156,7 @@ def traiter(id):
 
     try:
 
-        data = request.get_json() or {}
-
-        utilisateur = data.get(
-            "utilisateur",
-            "Etat Civil"
-        )
+        utilisateur = get_jwt_identity()
 
         transmission = traiter_transmission(
             id,
