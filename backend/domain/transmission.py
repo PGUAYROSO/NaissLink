@@ -54,12 +54,16 @@ class Transmission(db.Model):
     )
 
     def to_dict(self):
-
         return {
 
             "id": self.id,
 
             "dossier_id": self.dossier_id,
+
+            "numero_sejour": (
+                self.dossier.numero_sejour
+                if self.dossier else None
+            ),
 
             "destinataire": self.destinataire,
 
@@ -76,4 +80,47 @@ class Transmission(db.Model):
                 if self.date_creation else None
             )
 
+
         }
+    def receptionner(self):
+
+        if self.statut != "EN_ATTENTE":
+            raise ValueError(
+                "La transmission ne peut pas être réceptionnée."
+            )
+
+        self.statut = "RECEPTIONNEE"
+
+
+    def mettre_en_instruction(self):
+
+        if self.statut != "RECEPTIONNEE":
+            raise ValueError(
+                "La transmission doit être réceptionnée."
+            )
+
+        self.statut = "EN_INSTRUCTION"
+
+
+    def demander_complement(self, commentaire):
+
+        if self.statut != "EN_INSTRUCTION":
+            raise ValueError(
+                "La transmission doit être en instruction."
+            )
+
+        self.statut = "COMPLEMENT"
+        self.commentaire = commentaire
+
+
+    def traiter(self):
+
+        if self.statut not in (
+            "EN_INSTRUCTION",
+            "COMPLEMENT"
+        ):
+            raise ValueError(
+                "La transmission ne peut pas être traitée."
+            )
+
+        self.statut = "TRAITEE"

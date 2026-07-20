@@ -28,7 +28,7 @@ def executer(
             "Le nom de l'utilisateur est obligatoire."
         )
 
-    transmission.traiter(utilisateur)
+    transmission.traiter()
 
     db.session.commit()
 
