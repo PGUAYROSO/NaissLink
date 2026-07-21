@@ -8,7 +8,7 @@ class TransmissionRepository:
     def creer(transmission):
 
         db.session.add(transmission)
-        db.session.commit()
+        db.session.flush()
 
         return transmission
 
@@ -39,4 +39,4 @@ class TransmissionRepository:
     def supprimer(transmission):
 
         db.session.delete(transmission)
-        db.session.commit()
+        db.session.flush()

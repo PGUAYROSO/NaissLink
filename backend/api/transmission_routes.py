@@ -3,16 +3,12 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
 
 from application.creer_transmission import (executer as creer_transmission)
-
 from application.receptionner_transmission import (executer as receptionner_transmission)
-
 from application.mettre_en_instruction import (executer as mettre_en_instruction)
-
 from application.traiter_transmission import (executer as traiter_transmission)
-
 from application.demander_complement import (executer as demander_complement)
-
 from application.lister_toutes_transmissions import (executer as lister_toutes_transmissions)
+from application.lister_historique_transmission import (executer as lister_historique)
 
 
 
@@ -86,6 +82,8 @@ def receptionner(id):
 
     try:
 
+        utilisateur = get_jwt_identity()
+
         transmission = receptionner_transmission(id)
 
         return jsonify({
@@ -120,6 +118,8 @@ def receptionner(id):
 def instruction(id):
 
     try:
+
+        utilisateur = get_jwt_identity()
 
         transmission = mettre_en_instruction(id)
 
@@ -193,6 +193,8 @@ def complement(id):
 
         data = request.get_json()
 
+        utilisateur = get_jwt_identity()
+
         transmission = demander_complement(
             id,
             data["commentaire"]
@@ -236,3 +238,15 @@ def liste():
         transmission.to_dict()
         for transmission in transmissions_liste
     ])
+
+# ------------------------------------------------------------------
+# Lister historique
+# ------------------------------------------------------------------
+
+@transmissions.get("/transmissions/<int:transmission_id>/historique")
+@jwt_required()
+def historique(transmission_id):
+
+    return jsonify(
+        lister_historique(transmission_id)
+    )

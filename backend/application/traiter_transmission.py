@@ -1,35 +1,48 @@
-from datetime import datetime, UTC
-
 from app.extensions import db
 
 from infrastructure.transmission_repository import (
     TransmissionRepository
 )
 
+from application.ajouter_historique_transmission import (
+    executer as ajouter_historique
+)
+
 
 def executer(
-    transmission_id: int,
-    utilisateur: str
+    transmission_id,
+    utilisateur="Mairie"
 ):
 
-    transmission = (
-        TransmissionRepository.trouver_par_id(
+    try:
+
+        transmission = TransmissionRepository.trouver_par_id(
             transmission_id
         )
-    )
 
-    if transmission is None:
-        raise ValueError(
-            "Transmission introuvable."
+        if transmission is None:
+            raise ValueError(
+                "Transmission introuvable."
+            )
+
+        transmission.traiter()
+
+        ajouter_historique(
+
+            transmission_id=transmission.id,
+
+            utilisateur=utilisateur,
+
+            action="Transmission traitée"
+
         )
 
-    if not utilisateur:
-        raise ValueError(
-            "Le nom de l'utilisateur est obligatoire."
-        )
+        db.session.commit()
 
-    transmission.traiter()
+        return transmission
 
-    db.session.commit()
+    except Exception:
 
-    return transmission
+        db.session.rollback()
+
+        raise

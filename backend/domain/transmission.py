@@ -22,6 +22,13 @@ class Transmission(db.Model):
 
     )
 
+    historique = db.relationship(
+        "HistoriqueTransmission",
+        back_populates="transmission",
+        cascade="all, delete-orphan",
+        order_by="HistoriqueTransmission.date_action"
+    )
+
     destinataire = db.Column(
         db.String(255),
         nullable=False
@@ -82,6 +89,7 @@ class Transmission(db.Model):
 
 
         }
+
     def receptionner(self):
 
         if self.statut != "EN_ATTENTE":

@@ -6,32 +6,35 @@ class DocumentRepository:
 
     @staticmethod
     def creer(
-        dossier_id: int,
-        nom: str,
+        dossier_id,
+        nom,
         type_document,
-        chemin_fichier: str,
-        taille: int
+        chemin_fichier,
+        taille
     ):
+
         document = Document(
             dossier_id=dossier_id,
             nom=nom,
-            type_document=type_document.value if hasattr(type_document, "value") else type_document,
+            type_document=(
+                type_document.value
+                if hasattr(type_document, "value")
+                else type_document
+            ),
             chemin_fichier=chemin_fichier,
             taille=taille
         )
 
         db.session.add(document)
-        db.session.commit()
-
         return document
 
     @staticmethod
-    def trouver_par_id(document_id: int):
+    def trouver_par_id(document_id):
 
         return db.session.get(Document, document_id)
 
     @staticmethod
-    def trouver_par_dossier(dossier_id: int):
+    def trouver_par_dossier(dossier_id):
 
         return (
             Document.query
@@ -44,4 +47,3 @@ class DocumentRepository:
     def supprimer(document):
 
         db.session.delete(document)
-        db.session.commit()
