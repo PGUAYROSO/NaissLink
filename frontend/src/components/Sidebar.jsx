@@ -4,64 +4,250 @@ import {
     List,
     ListItem,
     ListItemButton,
-    ListItemText
+    ListItemIcon,
+    ListItemText,
+    Divider,
+    Typography,
+    Box
 } from "@mui/material";
 
-import { Link } from "react-router-dom";
+import {
+    Dashboard,
+    Folder,
+    Send,
+    Description,
+    DocumentScanner,
+    BarChart,
+    People,
+    Settings
+} from "@mui/icons-material";
 
-const drawerWidth = 240;
+import { NavLink } from "react-router-dom";
+
+const drawerWidth = 250;
+
+const menuMetier = [
+
+    {
+        texte: "Tableau de bord",
+        icone: <Dashboard />,
+        lien: "/dashboard"
+    },
+
+    {
+        texte: "Dossiers",
+        icone: <Folder />,
+        lien: "/dossiers"
+    },
+
+    {
+        texte: "Transmissions",
+        icone: <Send />,
+        lien: "/transmissions"
+    },
+
+    {
+        texte: "Documents",
+        icone: <Description />,
+        lien: "/documents"
+    },
+
+    {
+        texte: "OCR",
+        icone: <DocumentScanner />,
+        lien: "/ocr"
+    },
+
+    {
+        texte: "Statistiques",
+        icone: <BarChart />,
+        lien: "/statistiques"
+    }
+
+];
+
+const menuAdmin = [
+
+    {
+        texte: "Utilisateurs",
+        icone: <People />,
+        lien: "/utilisateurs"
+    },
+
+    {
+        texte: "Paramètres",
+        icone: <Settings />,
+        lien: "/parametres"
+    }
+
+];
 
 export default function Sidebar() {
 
     return (
 
         <Drawer
+
             variant="permanent"
+
             sx={{
+
                 width: drawerWidth,
+
                 flexShrink: 0,
+
                 "& .MuiDrawer-paper": {
+
                     width: drawerWidth,
-                    boxSizing: "border-box"
+
+                    boxSizing: "border-box",
+
+                    borderRight: "1px solid #E0E0E0"
+
                 }
+
             }}
+
         >
 
             <Toolbar />
 
-            <List>
+            <Box sx={{ overflow: "auto" }}>
 
-                <ListItem disablePadding>
-                    <ListItemButton component={Link} to="/dashboard">
-                        <ListItemText primary="🏠 Tableau de bord" />
-                    </ListItemButton>
-                </ListItem>
+                <Typography
+                    variant="overline"
+                    sx={{
+                        px: 3,
+                        pt: 2,
+                        color: "text.secondary"
+                    }}
+                >
+                    MÉTIER
+                </Typography>
 
-                <ListItem disablePadding>
-                    <ListItemButton component={Link} to="/dossiers">
-                        <ListItemText primary="📁 Dossiers" />
-                    </ListItemButton>
-                </ListItem>
+                <List>
 
-                <ListItem disablePadding>
-                    <ListItemButton component={Link} to="/transmissions">
-                        <ListItemText primary="📤 Transmissions" />
-                    </ListItemButton>
-                </ListItem>
+                    {menuMetier.map((item) => (
 
-                <ListItem disablePadding>
-                    <ListItemButton component={Link} to="/utilisateurs">
-                        <ListItemText primary="👥 Utilisateurs" />
-                    </ListItemButton>
-                </ListItem>
+                        <ListItem
+                            key={item.texte}
+                            disablePadding
+                        >
 
-                <ListItem disablePadding>
-                    <ListItemButton component={Link} to="/parametres">
-                        <ListItemText primary="⚙ Paramètres" />
-                    </ListItemButton>
-                </ListItem>
+                            <ListItemButton
 
-            </List>
+                                component={NavLink}
+
+                                to={item.lien}
+
+                                sx={{
+
+                                    "&.active": {
+
+                                        backgroundColor: "#E3F2FD",
+
+                                        color: "primary.main",
+
+                                        "& .MuiListItemIcon-root": {
+
+                                            color: "primary.main"
+
+                                        }
+
+                                    }
+
+                                }}
+
+                            >
+
+                                <ListItemIcon>
+
+                                    {item.icone}
+
+                                </ListItemIcon>
+
+                                <ListItemText
+
+                                    primary={item.texte}
+
+                                />
+
+                            </ListItemButton>
+
+                        </ListItem>
+
+                    ))}
+
+                </List>
+
+                <Divider sx={{ my: 2 }} />
+
+                <Typography
+                    variant="overline"
+                    sx={{
+                        px: 3,
+                        color: "text.secondary"
+                    }}
+                >
+                    ADMINISTRATION
+                </Typography>
+
+                <List>
+
+                    {menuAdmin.map((item) => (
+
+                        <ListItem
+                            key={item.texte}
+                            disablePadding
+                        >
+
+                            <ListItemButton
+
+                                component={NavLink}
+
+                                to={item.lien}
+
+                                sx={{
+
+                                    "&.active": {
+
+                                        backgroundColor: "#E3F2FD",
+
+                                        color: "primary.main",
+
+                                        "& .MuiListItemIcon-root": {
+
+                                            color: "primary.main"
+
+                                        }
+
+                                    }
+
+                                }}
+
+                            >
+
+                                <ListItemIcon>
+
+                                    {item.icone}
+
+                                </ListItemIcon>
+
+                                <ListItemText
+
+                                    primary={item.texte}
+
+                                />
+
+                            </ListItemButton>
+
+                        </ListItem>
+
+                    ))}
+
+                </List>
+
+            </Box>
 
         </Drawer>
 

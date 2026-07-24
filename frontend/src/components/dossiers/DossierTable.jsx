@@ -5,10 +5,14 @@ import {
 } from "@mui/material";
 
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import SendIcon from "@mui/icons-material/Send";
 
 import { DataGrid } from "@mui/x-data-grid";
+import { useNavigate } from "react-router-dom";
 
-export default function DossierTable({ dossiers }) {
+export default function DossierTable({ dossiers, onTransmettre }) {
+
+    const navigate = useNavigate();
 
     const columns = [
 
@@ -21,15 +25,15 @@ export default function DossierTable({ dossiers }) {
         {
             field: "statut",
             headerName: "Statut",
-            flex: 1,
+            width: 140,
             renderCell: (params) => (
 
                 <Chip
                     label={params.value}
                     color={
-                        params.value === "TRANSMIS"
-                            ? "success"
-                            : "warning"
+                        params.value === "BROUILLON"
+                            ? "warning"
+                            : "success"
                     }
                     size="small"
                 />
@@ -73,18 +77,34 @@ export default function DossierTable({ dossiers }) {
         {
             field: "actions",
             headerName: "Actions",
-            width: 100,
+            width: 120,
             sortable: false,
+            filterable: false,
 
-            renderCell: () => (
+            renderCell: (params) => (
 
-                <IconButton color="primary">
+                <>
 
-                    <VisibilityIcon />
+                    <IconButton
+                        color="primary"
+                        onClick={() =>
+                            navigate(`/dossiers/${params.row.numero_sejour}`)
+                        }
+                    >
+                        <VisibilityIcon />
+                    </IconButton>
 
-                </IconButton>
+                    <IconButton
+                        color="success"
+                        onClick={() => onTransmettre(params.row)}
+                    >
+                        <SendIcon />
+                    </IconButton>
+
+                </>
 
             )
+
         }
 
     ];

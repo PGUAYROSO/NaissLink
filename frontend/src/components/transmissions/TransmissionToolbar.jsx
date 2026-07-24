@@ -1,46 +1,42 @@
 import {
-    Box,
-    Button,
-    TextField
+    Stack,
+    TextField,
+    InputAdornment
 } from "@mui/material";
 
-interface Props {
-    recherche: string;
-    setRecherche: (value: string) => void;
-    onNouvelle: () => void;
-}
+import SearchIcon from "@mui/icons-material/Search";
 
 export default function TransmissionToolbar({
     recherche,
     setRecherche,
-    onNouvelle
-}: Props) {
+}) {
 
     return (
 
-        <Box
-            display="flex"
+        <Stack
+            direction="row"
             justifyContent="space-between"
-            mb={2}
+            alignItems="center"
+            spacing={2}
+            sx={{ mb: 3 }}
         >
 
             <TextField
-                label="Rechercher"
-                value={recherche}
-                onChange={(e) =>
-                    setRecherche(e.target.value)
-                }
+                placeholder="Rechercher une transmission..."
                 size="small"
+                value={recherche}
+                onChange={(e) => setRecherche(e.target.value)}
+                sx={{ width: 380 }}
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <SearchIcon />
+                        </InputAdornment>
+                    )
+                }}
             />
 
-            <Button
-                variant="contained"
-                onClick={onNouvelle}
-            >
-                Nouvelle transmission
-            </Button>
-
-        </Box>
+        </Stack>
 
     );
 

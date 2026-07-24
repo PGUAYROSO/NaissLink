@@ -1,88 +1,92 @@
 import {
-  BrowserRouter,
-  Routes,
-  Route
+    BrowserRouter,
+    Routes,
+    Route
 } from "react-router-dom";
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Dossiers from "./pages/Dossiers";
+import Dossier from "./pages/Dossier";
+import Transmissions from "./pages/Transmissions";
+import Utilisateurs from "./pages/Utilisateurs";
+import Parametres from "./pages/Parametres";
+import TypesDocuments from "./pages/TypesDocuments";
 
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import Dossiers from "./pages/Dossiers";
-import Transmissions from "./pages/Transmissions";
-import Utilisateurs from "./pages/Utilisateurs";
-import Parametres from "./pages/Parametres";
-
 function App() {
 
-  return (
+    return (
 
-    <BrowserRouter>
+        <BrowserRouter>
 
-      <Routes>
+            <Routes>
 
-        <Route
-          path="/"
-          element={<Login />}
-        />
+                {/* -----------------------------
+                    Login
+                ----------------------------- */}
 
-        <Route
-          element={
-            <ProtectedRoute>
-              <MainLayout />
-            </ProtectedRoute>
-          }
-        >
+                <Route
+                    path="/"
+                    element={<Login />}
+                />
 
-          <Route
-            path="/dashboard"
-            element={<Dashboard />}
-          />
+                {/* -----------------------------
+                    Routes protégées
+                ----------------------------- */}
 
-        </Route>
+                <Route
+                    element={
+                        <ProtectedRoute>
+                            <MainLayout />
+                        </ProtectedRoute>
+                    }
+                >
 
-            <Route
-    element={
-        <ProtectedRoute>
-            <MainLayout />
-        </ProtectedRoute>
-    }
->
+                    <Route
+                        path="/dashboard"
+                        element={<Dashboard />}
+                    />
 
-             <Route
-        path="/dashboard"
-        element={<Dashboard />}
-    />
+                    <Route
+                        path="/dossiers"
+                        element={<Dossiers />}
+                    />
 
-             <Route
-        path="/dossiers"
-        element={<Dossiers />}
-    />
+                    <Route
+                        path="/dossiers/:numeroSejour"
+                        element={<Dossier />}
+                    />
 
-             <Route
-        path="/transmissions"
-        element={<Transmissions />}
-    />
+                    <Route
+                        path="/transmissions"
+                        element={<Transmissions />}
+                    />
 
-             <Route
-        path="/utilisateurs"
-        element={<Utilisateurs />}
-    />
+                    <Route
+                        path="/utilisateurs"
+                        element={<Utilisateurs />}
+                    />
 
-             <Route
-        path="/parametres"
-        element={<Parametres />}
-    />
+                    <Route
+                        path="/types-documents"
+                        element={<TypesDocuments />}
+                    />
 
-          </Route>
+                    <Route
+                        path="/parametres"
+                        element={<Parametres />}
+                    />
 
-        </Routes>
+                </Route>
 
-    </BrowserRouter>
+            </Routes>
 
-  );
+        </BrowserRouter>
+
+    );
 
 }
 

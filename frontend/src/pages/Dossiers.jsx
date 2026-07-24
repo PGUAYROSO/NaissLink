@@ -4,8 +4,8 @@ import { Typography } from "@mui/material";
 
 import DossierToolbar from "../components/dossiers/DossierToolbar";
 import DossierTable from "../components/dossiers/DossierTable";
-
 import DossierDialog from "../components/dossiers/DossierDialog";
+import TransmissionDialog from "../components/transmissions/TransmissionDialog";
 
 import {
     listerDossiers,
@@ -18,6 +18,9 @@ export default function Dossiers() {
     const [recherche, setRecherche] = useState("");
     const [dialogOuvert, setDialogOuvert] = useState(false);
 
+    const [dialogTransmissionOpen, setDialogTransmissionOpen] = useState(false);
+    const [dossierSelectionne, setDossierSelectionne] = useState(null);
+
     useEffect(() => {
 
         charger();
@@ -26,19 +29,19 @@ export default function Dossiers() {
 
     async function charger() {
 
-            try {
+        try {
 
-                const data = await listerDossiers();
+            const data = await listerDossiers();
 
-                setDossiers(data);
+            setDossiers(data);
 
-            } catch (e) {
+        } catch (e) {
 
-                console.error(e);
-
-            }
+            console.error(e);
 
         }
+
+    }
 
     const dossiersFiltres = dossiers.filter((dossier) =>
         dossier.numero_sejour
@@ -48,29 +51,39 @@ export default function Dossiers() {
 
     function nouveauDossier() {
 
-    setDialogOuvert(true);
-
-}
-
-    async function creerNouveauDossier(numeroSejour) {
-
-    try {
-
-        await creerDossier(numeroSejour);
-
-        setDialogOuvert(false);
-
-        await charger();
-
-    } catch (e) {
-
-        console.error(e);
-
-        alert("Impossible de créer le dossier.");
+        setDialogOuvert(true);
 
     }
 
-}
+    async function creerNouveauDossier(numeroSejour) {
+
+        try {
+
+            await creerDossier(numeroSejour);
+
+            setDialogOuvert(false);
+
+            await charger();
+
+        } catch (e) {
+
+            console.error(e);
+
+            alert("Impossible de créer le dossier.");
+
+        }
+
+    }
+
+    function transmettre(dossier) {
+
+        setDossierSelectionne(dossier);
+
+        console.log("Dossier sélectionné :", dossier);
+
+        setDialogTransmissionOpen(true);
+
+    }
 
     return (
 
@@ -91,16 +104,19 @@ export default function Dossiers() {
 
             <DossierTable
                 dossiers={dossiersFiltres}
-
+                onTransmettre={transmettre}
             />
+
             <DossierDialog
-
                 open={dialogOuvert}
-
                 onClose={() => setDialogOuvert(false)}
-
                 onCreate={creerNouveauDossier}
+            />
 
+            <TransmissionDialog
+                open={dialogTransmissionOpen}
+                dossier={dossierSelectionne}
+                onClose={() => setDialogTransmissionOpen(false)}
             />
 
         </>
